@@ -1,0 +1,121 @@
+﻿@inject Common.Resources rss
+@{
+    var rs = rss.Load();
+
+    string lang = rss.Lang;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="~/assets/images/icon.png" type="image/gif" sizes="16x16">
+    <title>@Html.Raw(ViewData["Title"]) - THE SHOW THEATRE</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/datatables.css" />
+    <link rel="stylesheet" href="~/css/dropify.css" />
+    <link rel="stylesheet" href="~/summernote/summernote.min.css" />
+    <link rel ="stylesheet" href="~/lightbox/css/lightbox.min.css" />
+    <link rel="stylesheet" href="~/css/bof.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+                    <img class="logo" src="~/assets/images/logo.png" style="height:30px" alt="">
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="BofHome" asp-action="Index">@rs["Home"]</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="BofSlide" asp-action="Index">@rs["Slide"]</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="BofClient" asp-action="Index">@rs["Client"]</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="BofPerformanceType" asp-action="Index">@rs["PerformanceType"]</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="BofPerformance" asp-action="Index">@rs["Performance"]</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="BofWelcome" asp-action="Index">@rs["Welcome"]</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="BofContact" asp-action="Index">@rs["Contact"]</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="BofUser" asp-action="Index">@rs["User"]</a>
+                        </li>
+
+                    </ul>
+                    <form class="d-flex">
+                        <div class="dropdown">
+                            <a class="btn btn-outline-light dropdown-toggle me-2" role="button" id="ddLang" data-bs-toggle="dropdown" aria-expanded="false">
+                                @lang.ToUpper()
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="ddLang">
+                                <li>
+                                    @if (lang == "th")
+                                    {
+                                        <a class="dropdown-item pointer" onclick="setLang('en')">EN</a>
+                                    }
+                                    else
+                                    {
+                                        <a class="dropdown-item pointer" onclick="setLang('th')">TH</a>
+                                    }
+                                </li>
+                            </ul>
+                        </div>
+                        <a class="btn btn-outline-warning me-2">@User.Identity.Name</a>
+                        <a asp-controller="Account" asp-action="Logout" class="btn btn-outline-danger">
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container-fluid">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted mt-4">
+        <div class="container">
+            &copy; Copyright 2024 - The Show Theatre. All rights reserved
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/datatables.js.js"></script>
+    <script src="~/js/jquery.validate.min.js"></script>
+    <script src="~/js/moment.js"></script>
+    <script src="~/js/numeral.min.js"></script>
+    <script src="~/js/sweetalert2.all.js"></script>
+    <script src="~/js/dropify.js"></script>
+    <script src="~/summernote/summernote.min.js"></script>
+    <script src="~/lightbox/js/lightbox.min.js"></script>
+    <script src="https://kit.fontawesome.com/62a54ee224.js" crossorigin="anonymous"></script>
+    <script src="~/js/bof.js" asp-append-version="true"></script>
+    <script>
+        setLang = lang => {
+            $.post("@Url.Action("SetLanguage", "Home")", { lang }, function (data) {
+                location.reload()
+            })
+        }
+
+        rs = (en, th) => "@lang" == "th" ? th : en
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

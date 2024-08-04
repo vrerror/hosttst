@@ -1,0 +1,144 @@
+﻿@inject Common.Resources rss
+@model TST.DataAccess.Entities.Contact
+@{
+    Layout = "~/Views/Shared/_BofLayout.cshtml";
+
+    var rs = rss.Load();
+
+    ViewData["Title"] = rs["Contact"];
+}
+<h2 class="text-center">@ViewData["Title"]</h2>
+
+<form id="form1">
+    <div class="row mb-2">
+        <div class="col-lg-3"></div>
+        <div class="col-md-6 col-lg-3">
+            <label class="form-label">@rs["CompanyName"] EN</label>
+            <input type="text" asp-for="CompanyNameEn" class="form-control" maxlength="40" required />
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <label class="form-label">@rs["CompanyName"] TH</label>
+            <input type="text" asp-for="CompanyNameTh" class="form-control" maxlength="40" required />
+        </div>
+    </div>
+
+    <div class="row mb-2">
+        <div class="col-lg-3"></div>
+        <div class="col-md-12 col-lg-6">
+            <label class="form-label">@rs["Address"] EN</label>
+            <input type="text" asp-for="AddressEn" class="form-control" maxlength="250" required />
+        </div>
+    </div>
+
+
+    <div class="row mb-2">
+        <div class="col-lg-3"></div>
+        <div class="col-md-12 col-lg-6">
+            <label class="form-label">@rs["Address"] TH</label>
+            <input type="text" asp-for="AddressTh" class="form-control" maxlength="250" required />
+        </div>
+    </div>
+
+
+
+
+    <div class="row mb-2">
+        <div class="col-lg-3"></div>
+        <div class="col-md-6 col-lg-3">
+            <label class="form-label">@rs["ContactNumber"] 1</label>
+            <input type="text" asp-for="ContactNumber1" class="form-control" maxlength="20" required />
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <label class="form-label">@rs["ContactNumber"] 2</label>
+            <input type="text" asp-for="ContactNumber2" class="form-control" maxlength="20" required />
+        </div>
+    </div>
+
+    <div class="row mb-2">
+        <div class="col-lg-3"></div>
+        <div class="col-md-6 col-lg-3">
+            <label class="form-label">@rs["Email"] </label>
+            <input type="text" asp-for="Email" class="form-control" maxlength="50" required />
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <label class="form-label">LINE ID</label>
+            <input type="text" asp-for="LineId" class="form-control" maxlength="30" required />
+        </div>
+    </div>
+
+
+    <div class="row mb-2">
+        <div class="col-lg-3"></div>
+        <div class="col-md-6 col-lg-3">
+            <label class="form-label">WeChat ID</label>
+            <input type="text" asp-for="WeChatId" class="form-control" maxlength="30" required />
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <label class="form-label">WhatsApp ID</label>
+            <input type="text" asp-for="WhatsAppId" class="form-control" maxlength="30" required />
+        </div>
+    </div>
+
+    <div class="row mb-2">
+        <div class="col-lg-3"></div>
+        <div class="col-md-6 col-lg-3">
+            <label class="form-label">LINE URL</label>
+            <input type="text" asp-for="LineUrl" class="form-control" maxlength="250" required />
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <label class="form-label">Youtube URL</label>
+            <input type="text" asp-for="YoutubeUrl" class="form-control" maxlength="250" required />
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-lg-3"></div>
+        <div class="col-md-6 col-lg-3">
+            <label class="form-label">Facebook URL</label>
+            <input type="text" asp-for="FacebookUrl" class="form-control" maxlength="250" required />
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <label class="form-label">Instagram URL</label>
+            <input type="text" asp-for="InstagramUrl" class="form-control" maxlength="250" required />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-3"></div>
+        <div class="col-md-12 col-lg-6 text-end">
+            <a class="btn btn-success" onclick="save()">@rs["Save"]</a>
+        </div>
+
+    </div>
+</form>
+
+@section scripts {
+    <script>
+        save = () => {
+            let data = {
+                CompanyNameEn: $.trim($("#CompanyNameEn").val()),
+                CompanyNameTh: $.trim($("#CompanyNameTh").val()),
+                AddressEn: $.trim($("#AddressEn").val()),
+                AddressTh: $.trim($("#AddressTh").val()),
+                ContactNumber1: $.trim($("#ContactNumber1").val()),
+                ContactNumber2: $.trim($("#ContactNumber2").val()),
+                Email: $.trim($("#Email").val()),
+                LineId: $.trim($("#LineId").val()),
+                WeChatId: $.trim($("#WeChatId").val()),
+                WhatsAppId: $.trim($("#WhatsAppId").val()),
+                LineUrl: $.trim($("#LineUrl").val()),
+                YoutubeUrl: $.trim($("#YoutubeUrl").val()),
+                FacebookUrl: $.trim($("#FacebookUrl").val()),
+                InstagramUrl: $.trim($("#InstagramUrl").val()),
+            }
+
+            $.post("@Url.Action("Update", "BofContact")", { data }, function (data) {
+                Swal.fire({
+                    title: "@rs["Saved"] @rs["Successfully"]!",
+                    icon: "success"
+                })
+            })
+        }
+
+    </script>
+}

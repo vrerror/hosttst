@@ -1,0 +1,131 @@
+﻿@using TST.Core.Models
+@using TST.Core.Common
+@inject Common.Resources rss
+@{
+    var rs = rss.Load();
+
+    GetPerformanceDetailRes data = ViewBag.Data;
+
+    string type = rss.Mapping(data.TypeEn, data.TypeTh);
+    string name = rss.Mapping(data.NameEn, data.NameTh);
+    string title = $"{name}, {type}";
+
+    ViewData["Title"] = title;
+
+    ViewBag.MetaDesc = rss.BuildWord($"{data.ShortDetailTh},{data.ShortDetailEn}");
+    ViewBag.MetaKey = rss.BuildWord($"{data.TypeTh},{data.NameTh},{data.TitleTh},{data.TypeEn},{data.NameEn},{data.TitleEn}");
+
+    string path = Url.Content("~/Files/" + UploadFolder.Performance);
+
+    GetContactWebRes contact = ViewBag.Contact;
+}
+
+<section id="header" data-bgimage="url(/assets/images/bg/3.png) fixed center no-repeat">
+    <div class="wm wm-border dark wow fadeInDown ">@Html.Raw(type)</div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 offset-md-3 text-center wow fadeInUp">
+                <h1>@Html.Raw(name)</h1>
+                <div class="separator"><span><i class="fa fa-square"></i></span></div>
+                <div class="spacer-single"></div>
+            </div>
+        </div>
+        @if (!string.IsNullOrEmpty(data.YoutubeUrl))
+        {
+            <div class="row">
+                <div class="col-12">
+                    <iframe style="width: 100%" height="400"
+                            src="@data.YoutubeUrl">
+                    </iframe>
+                </div>
+                <div class="spacer-single"></div>
+            </div>
+        }
+        <div class="row">
+            <div class="col-12">
+                <h3>@Html.Raw(rss.Mapping(data.TitleEn, data.TitleTh))</h3>
+                <div>
+                    @Html.Raw(rss.Mapping(data.DetailEn, data.DetailTh))
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@if (data.Images.Any())
+{
+    <section id="section-portfolio" data-bgimage="url(/assets/images/bg/9.jpg) fixed center no-repeat" class="no-top no-bottom" aria-label="section">
+        <div id="gallery" class="gallery zoom-gallery full-gallery de-gallery pf_full_width wow fadeInUp" data-wow-delay=".3s">
+            @foreach (var i in data.Images)
+            {
+                <div class="item">
+                    <div class="picframe">
+                        <a href="@path/@i" title="@Html.Raw(title)">
+                            <span class="overlay">
+                                <span class="pf_text">
+                                    <span class="project-name">@Html.Raw(rs["ViewImage"])</span>
+                                </span>
+                            </span>
+                            <img src="@path/@i" alt="@Html.Raw(title)">
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    </section>
+}
+
+<section id="bookNow" data-bgimage="url(/assets/images/bg/2.jpg) fixed center no-repeat">
+    <div class="wm wm-border dark wow fadeInDown">
+        <a onclick="bookNow()" class="btn-custom font-weight-bold text-white pointer">Book Now</a>
+    </div>
+</section>
+
+<div class="modal" tabindex="-1" id="modal1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h3>@Html.Raw(rss.Mapping(contact.CompanyNameEn, contact.CompanyNameTh))</h3>
+                        <hr style="margin: 10px 0">
+                        <p>
+                            <i class="fa-solid fa-phone me-2"></i>
+                            <a href="tel:@rss.ToPhone66(contact.ContactNumber1)">@contact.ContactNumber1</a>
+                            @if (!string.IsNullOrEmpty(contact.ContactNumber2))
+                            {
+                                @: , <a href="tel:@rss.ToPhone66(contact.ContactNumber2)">@contact.ContactNumber2</a>
+                            }
+                        </p>
+                        <p>
+                            <i class="fa-solid fa-envelope me-2"></i>
+                            @contact.Email
+                        </p>
+                        <p>
+                            <i class="fa-brands fa-line me-2"></i>
+                            @contact.LineId
+                        </p>
+                        <p>
+                            <i class="fa-brands fa-weixin me-2"></i>
+                            @contact.WeChatId
+                        </p>
+                        <p>
+                            <i class="fa-brands fa-whatsapp me-2"></i>
+                            @contact.WhatsAppId
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts {
+    <script>
+        const modal1 = new bootstrap.Modal('#modal1', {
+        })
+
+        bookNow = () => modal1.show()
+    </script>
+}                                

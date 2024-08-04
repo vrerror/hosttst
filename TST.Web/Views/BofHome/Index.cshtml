@@ -1,0 +1,21 @@
+﻿@inject Common.Resources rss
+@{
+    Layout = "~/Views/Shared/_BofLayout.cshtml";
+
+    var rs = rss.Load();
+
+    ViewData["Title"] = rs["BackOfficeSystem"];
+}
+
+<br />
+<div class="row mt-4 mb-4">
+    <div class="col s12">
+        <center>
+            <h3 class="bold">@rs["WelcomeOnBoard"] <i class="fa-regular fa-face-smile-beam"></i></h3>
+            <h4>@rs["Khun"] @User.Identity.Name</h4>
+            
+            <h4 class="mt-4">@rs["BackOfficeSystem"]</h4>
+            <h5>The Show Theatre. All rights reserved</h5>
+        </center>
+    </div>
+</div

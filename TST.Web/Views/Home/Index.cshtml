@@ -1,0 +1,387 @@
+﻿@using TST.Web.Core
+@using TST.Core.Models
+@using TST.Core.Common
+@inject Common.Resources rss
+@{
+    var rs = rss.Load();
+
+    ViewData["Title"] = rs["DefaultTitle"];
+    ViewBag.MetaDesc = rs["DefaultDesc"];
+
+    string hrefSec = ViewBag.HrefSec?.ToString();
+
+    string[] bg = new string[] { "1.jpg", "2.png", "2.jpg", "3.png" };
+
+    List<GetSlideWedRes> slides = ViewBag.Slides;
+    List<GetClientWebRes> clients = ViewBag.Clients;
+    List<Ddl> types = ViewBag.PerformanceTypes;
+    List<GetPerformanceWebRes> performances = ViewBag.Performances;
+    GetContactWebRes contact = ViewBag.Contact;
+    GetWelcomeWebRes welcome = ViewBag.Welcome;
+
+    string slidePath = Url.Content("~/Files/" + UploadFolder.Slide);
+    string welcomePath = Url.Content("~/Files/" + UploadFolder.Welcome);
+    string clientPath = Url.Content("~/Files/" + UploadFolder.Client);
+    string performancePath = Url.Content("~/Files/" + UploadFolder.Performance);
+
+
+    string t1 = string.Join(" ", types.Select(s => s.TextTh));
+    string t2 = string.Join(", ", types.Select(s => s.TextEn));
+    ViewBag.MetaKey = t1 + ", " + t2;
+}
+
+<div id="particles-js" style="z-index: 30"></div>
+
+<section id="section-home" class="fullwidthbanner-container" aria-label="section-slider" data-bgcolor="#101010">
+    <div id="slider-revolution">
+        <ul>
+            @foreach (var a in slides)
+            {
+                string keyword = rss.BuildWord(a.KeywordEn + "," + a.KeywordTh);
+
+                <li data-transition="random-premium" data-slotamount="10" data-masterspeed="200" data-thumb="">
+                    <img class="rev-slidebg" data-bgparallax="0" src="@slidePath/@a.Image" alt="@Html.Raw(keyword)">
+                </li>
+            }
+        </ul>
+
+        <div style="" class="tp-static-layers">
+            <div class="text-center tp-caption size-28 font-weight-bold text-white tp-static-layer"
+                 data-x="['center','center','center','center']"
+                 data-hoffset="['0']"
+                 data-y="['top','top','top','top']"
+                 data-voffset="['185']"
+                 data-lineheight="['90','90','90','90']"
+                 data-width="none"
+                 data-height="none"
+                 data-whitespace="nowrap"
+                 data-type="text"
+                 data-responsive_offset="on"
+                 data-startslide="0"
+                 data-endslide="3"
+                 data-frames='[{"from":"opacity:0;","speed":300,"to":"o:1;","delay":500,"ease":"Power2.easeInOut"},{"delay":"wait","speed":300,"to":"opacity:0;","ease":"nothing"}]'
+                 data-textAlign="['center','center','center','center']"
+                 data-paddingtop="[0,0,0,0]"
+                 data-paddingright="[0,0,0,0]"
+                 data-paddingbottom="[0,0,0,0]"
+                 data-paddingleft="[0,0,0,0]">
+                <span class="id-color-2">@Html.Raw(rss.Mapping(welcome.SlideText1En, welcome.SlideText1Th))</span>
+            </div>
+
+            <div class="text-center tp-caption size-84 font-weight-bold text-white tp-static-layer"
+                 data-x="['center','center','center','center']"
+                 data-hoffset="['0']"
+                 data-y="['center','center','center','center']"
+                 data-lineheight="['90','90','90','90']"
+                 data-width="none"
+                 data-height="none"
+                 data-whitespace="nowrap"
+                 data-type="text"
+                 data-responsive_offset="on"
+                 data-startslide="0"
+                 data-endslide="3"
+                 data-frames='[{"from":"opacity:0;","speed":300,"to":"o:1;","delay":500,"ease":"Power2.easeInOut"},{"delay":"wait","speed":300,"to":"opacity:0;","ease":"nothing"}]'
+                 data-textAlign="['center','center','center','center']"
+                 data-paddingtop="[0,0,0,0]"
+                 data-paddingright="[0,0,0,0]"
+                 data-paddingbottom="[0,0,0,0]"
+                 data-paddingleft="[0,0,0,0]">
+                @Html.Raw(rss.Mapping(welcome.SlideText2En, welcome.SlideText2Th))
+
+                @if (!string.IsNullOrEmpty(welcome.SlideText3En))
+                {
+                    <br />
+                    @Html.Raw(rss.Mapping(welcome.SlideText3En, welcome.SlideText3Th))
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="about" data-bgimage="url(../assets/images/bg/1.png) fixed no-repeat">
+    <div class="wm wm-border dark wow fadeInDown">welcome</div>
+    <div class="container">
+        <div class="row align-items-center">
+
+            <div class="col-lg-6 wow fadeInLeft" data-wow-delay="0s">
+                <h2>@Html.Raw(rss.Mapping(welcome.HeaderEn, welcome.HeaderTh))</h2>
+                <p>
+                    @Html.Raw(rss.Mapping(welcome.DetailEn, welcome.DetailTh))
+                </p>
+
+                <div class="spacer10"></div>
+            </div>
+
+            <div class="col-lg-6 mb-sm-30 text-center wow fadeInRight">
+                <div class="de-images">
+                    <img src="@welcomePath/@welcome.Image2" class="di-small wow fadeIn">
+                    <img src="@welcomePath/@welcome.Image3" class="di-small-2 wow fadeIn">
+                    <img src="@welcomePath/@welcome.Image1" class="di-big img-fluid wow fadeInRight" data-wow-delay=".25s">
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<section id="clients" data-bgimage="url(../assets/images/bg/3.png) fixed center no-repeat">
+    <div class="wm wm-border dark wow fadeInDown ">clients</div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 offset-md-3 text-center wow fadeInUp">
+                <h1>Clients</h1>
+                <div class="separator"><span><i class="fa fa-square"></i></span></div>
+                <div class="spacer-single"></div>
+            </div>
+            <div class="col-md-12 text-center wow fadeInUp">
+                <div class="spacer-single"></div>
+                @{
+                    int c = 1;
+                    foreach (var client in clients)
+                    {
+                        string keyword = rss.BuildWord(client.NameEn + "," + client.NameTh);
+                        <img src="@clientPath/@client.Image" alt="@Html.Raw(keyword)" class="grey-hover">
+
+                        if (c % 4 == 0)
+                        {
+                            <div class="spacer-double"></div>
+                        }
+                        c++;
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="gradient-to-right text-light call-to-action" aria-label="cta" style="padding: 30px 0">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8 col-md-7">
+                <h3 class="size-2 no-margin">Performances</h3>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div id="performances">
+    @{
+        int i = 0;
+        foreach (Ddl t in types)
+        {
+            string type = rss.Mapping(t.TextEn, t.TextTh);
+
+            <section class="jarallax text-light">
+                <img src="~/assets/images/bg/@bg[i]" class="jarallax-img">
+                <div class="wm wm-border dark wow fadeInDown">@Html.Raw(type)</div>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-6 offset-md-3 text-center wow fadeInUp">
+                            <h1>@Html.Raw(type)</h1>
+                            <div class="separator"><span><i class="fa fa-square"></i></span></div>
+                            <div class="spacer-single"></div>
+                        </div>
+                        <div class="clearfix"></div>
+                        @{
+                            int j = 1;
+                            var pt = performances.Where(w => w.PerformanceTypeId == t.Value);
+                            foreach (var p in pt)
+                            {
+                                string name = rss.Mapping(p.NameEn, p.NameTh);
+                                string keyword = rss.BuildWord(p.NameEn + "," + p.NameTh);
+
+                                <div class="col-xl-4 col-lg-4 col-sm-6 mb30 wow fadeInUp">
+                                    <div class="de-team-list">
+                                        <div class="team-pic">
+                                            <img src="@performancePath/@p.Image" class="img-responsive" alt="@Html.Raw(keyword)">
+                                        </div>
+                                        <div class="team-desc">
+                                            <h3>@Html.Raw(name)</h3>
+                                            <p class="lead">@Html.Raw(rss.Mapping(p.TitleEn, p.TitleTh))</p>
+                                            <div class="small-border"></div>
+                                            <p>@Html.Raw(rss.Mapping(p.ShortDetailEn, p.ShortDetailTh))</p>
+
+                                            <div>
+                                                <a asp-controller="Performance" asp-action="Index" asp-route-id="@p.Id" asp-route-name="@Html.FriendlyName(p.NameEn)" class="btn-custom font-weight-bold text-white sm-mb-30">@Html.Raw(rs["ViewMore"])</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                if (j % 3 == 0)
+                                {
+                                    <div class="clearfix"></div>
+                                }
+                                j++;
+                            }
+                        }
+                    </div>
+                </div>
+            </section>
+
+            if (i == bg.Length - 1)
+            {
+                i = 0;
+            }
+            else
+            {
+                i++;
+            }
+        }
+    }
+</div>
+
+<section id="section-fun-facts" class="jarallax text-light">
+    <img src="~/assets/images/bg/3.jpg" class="jarallax-img">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 col-xs-6 wow fadeIn" data-wow-delay=".5s">
+                <div class="de_count">
+                    <i class="fa-regular fa-star id-color-2"></i>
+                    <h3>@(DateTime.Now.Year - 2008)</h3>
+                    <span class="text-white">@Html.Raw(rs["Experiences"])</span>
+                </div>
+            </div>
+
+            <div class="col-md-4 col-xs-6 wow fadeIn" data-wow-delay=".5s">
+                <div class="de_count">
+                    <i class="fa-regular fa-gem id-color-2"></i>
+                    <h3>@((performances.Count * 2).ToString("#,0"))</h3>
+                    <span class="text-white">@Html.Raw(rs["Events"])</span>
+                </div>
+            </div>
+
+            <div class="col-md-4 col-xs-6 wow fadeIn" data-wow-delay=".5s">
+                <div class="de_count">
+                    <i class="fa-regular fa-heart id-color-2"></i>
+                    <h3>@((clients.Count * 3).ToString("#,0"))</h3>
+                    <span class="text-white">@Html.Raw(rs["Clients"])</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="contact" data-bgimage="url(../assets/images/bg/3.png) fixed center no-repeat">
+    <div class="wm wm-border dark wow fadeInDown ">@Html.Raw(rs["Contact"])</div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 offset-md-3 text-center wow fadeInUp">
+                <h1>@Html.Raw(rs["Contact"])</h1>
+                <div class="separator"><span><i class="fa fa-square"></i></span></div>
+                <div class="spacer-single"></div>
+            </div>
+
+            <div class="col-lg-4 wow fadeIn" data-wow-delay="0s">
+                <div class="box-number square">
+                    <i class="bg-color hover-color-2 fa-solid fa-location-dot text-light"></i>
+                    <div class="text">
+                        <h3><span>@Html.Raw(rss.Mapping(contact.CompanyNameEn, contact.CompanyNameTh))</span></h3>
+                        <p>@Html.Raw(rss.Mapping(contact.AddressEn, contact.AddressTh))</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 wow fadeIn" data-wow-delay=".25s">
+                <div class="box-number square">
+                    <i class="bg-color hover-color-2 fa-solid fa-phone text-light"></i>
+                    <div class="text">
+                        <h3>@rs["ContactNumber"]</h3>
+                        <p>
+                            <a href="tel:@rss.ToPhone66(contact.ContactNumber1)" style="color:#aaaaaa">@contact.ContactNumber1</a>
+
+                            @if (!string.IsNullOrEmpty(contact.ContactNumber2))
+                            {
+                                <br />
+                                <a href="tel:@rss.ToPhone66(contact.ContactNumber2)" style="color:#aaaaaa">@contact.ContactNumber2</a>
+                            }
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 wow fadeIn" data-wow-delay=".5s">
+                <div class="box-number square">
+                    <i class="bg-color hover-color-2 fa-solid fa-envelope text-light"></i>
+                    <div class="text">
+                        <h3><span>@rs["Email"]</span></h3>
+                        <p>@contact.Email</p>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="spacer-single sm-hide"></div>
+
+            <div class="col-lg-4 wow fadeIn" data-wow-delay=".75s">
+                <div class="box-number square">
+                    <i class="bg-color hover-color-2 fa-brands fa-line text-light"></i>
+                    <div class="text">
+                        <h3><span>LINE ID</span></h3>
+                        <p>@contact.LineId</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 wow fadeIn" data-wow-delay="1s">
+                <div class="box-number square">
+                    <i class="bg-color hover-color-2 fa-brands fa-weixin text-light"></i>
+                    <div class="text">
+                        <h3><span>WeChat</span></h3>
+                        <p>@contact.WeChatId</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 wow fadeIn" data-wow-delay="1.25s">
+                <div class="box-number square">
+                    <i class="bg-color hover-color-2 fa-brands fa-whatsapp text-light"></i>
+                    <div class="text">
+                        <h3><span>WhatsApp</span></h3>
+                        <p>@contact.WhatsAppId</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+@section scripts {
+    <script src="~/assets/js/particles.js"></script>
+    <script src="~/assets/js/particles-settings.js"></script>
+    <script>
+        jQuery(document).ready(function () {
+            jQuery("#slider-revolution").revolution({
+                sliderType: "standard",
+                sliderLayout: "fullwidth",
+                delay: 5000,
+                navigation: {
+                    arrows: {
+                        enable: true
+                    },
+                    bullets: {
+                        enable: false,
+                        style: 'hermes'
+                    },
+
+                },
+                parallax: {
+                    type: "mouse",
+                    origo: "slidercenter",
+                    speed: 2000,
+                    levels: [2, 3, 4, 5, 6, 7, 12, 16, 10, 50],
+                },
+                spinner: "off",
+                gridwidth: 1140,
+                gridheight: 700,
+                disableProgressBar: "on"
+            });
+
+        @if (hrefSec != "")
+        {
+            @:$("#mainmenu li a")["@hrefSec"].click()
+        }
+                                                                        });
+    </script>
+}

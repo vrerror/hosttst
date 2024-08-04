@@ -1,0 +1,197 @@
+﻿@using TST.Core.Models
+@using TST.Web.Core;
+@inject Common.Resources rss
+@inject TST.DataAccess.Interfaces.IContactDa contactDa
+@{
+    var rs = rss.Load();
+
+    string lang = rss.Lang;
+
+    string title = ViewData["Title"]?.ToString();
+    string metaDesc = ViewBag.MetaDesc ?? title;
+    string metaKey = ViewBag.MetaKey ?? title;
+
+    if (ViewBag.Contact == null)
+    {
+        ViewBag.Contact = await contactDa.GetWebRes();
+    }
+    GetContactWebRes contact = ViewBag.Contact;
+}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <link rel="icon" href="~/assets/images/icon.png" type="image/gif" sizes="16x16">
+    <title>THE SHOW THEATRE - @Html.Raw(ViewData["Title"])</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="@Html.Raw(metaDesc)">
+    <meta name="keywords" content="@Html.Raw(metaKey)">
+    <meta name="author" content="@rs["TheShowTheatre"]">
+
+    <!-- CSS Files
+    ================================================== -->
+    <link href="~/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" id="bootstrap">
+    <link href="~/assets/css/bootstrap-grid.min.css" rel="stylesheet" type="text/css" id="bootstrap-grid">
+    <link href="~/assets/css/bootstrap-reboot.min.css" rel="stylesheet" type="text/css" id="bootstrap-reboot">
+    <link href="~/assets/css/plugins.css" rel="stylesheet" type="text/css">
+    <link href="~/assets/css/style.css" rel="stylesheet" type="text/css">
+    <link href="~/assets/css/rev-settings.css" rel="stylesheet" type="text/css">
+    <link href="~/assets/css/color.css" rel="stylesheet" type="text/css">
+
+    <!-- color scheme -->
+    <link rel="stylesheet" href="~/assets/css/colors/magenta.css" type="text/css" id="colors">
+
+    <!-- RS5.0 Stylesheet -->
+    <link rel="stylesheet" href="~/assets/revolution/css/settings.css" type="text/css">
+    <link rel="stylesheet" href="~/assets/revolution/css/layers.css" type="text/css">
+    <link rel="stylesheet" href="~/assets/revolution/css/navigation.css" type="text/css">
+    <link rel="stylesheet" href="~/assets/css/rev-settings.css" type="text/css">
+
+    <!-- custom font -->
+    <link rel="stylesheet" href="~/assets/css/font-style.css" type="text/css">
+</head>
+
+<body id="homepage">
+    <div id="wrapper">
+
+        <!-- header begin -->
+        <header class="transparent">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <!-- logo begin -->
+                        <div id="logo">
+                            <a asp-controller="Home" asp-action="Index">
+                                <img class="logo" src="~/assets/images/logo.png" alt="The Show Theatre, เดอะโชว์ เธียเตอร์">
+                            </a>
+                        </div>
+                        <!-- logo close -->
+                        <!-- small button begin -->
+                        <span id="menu-btn"></span>
+                        <!-- small button close -->
+                        <!-- mainmenu begin -->
+                        <ul id="mainmenu" class="ms-2">
+                            @if (!Html.ExceptRoute())
+                            {
+                                <li><a href="#section-home">@Html.Raw(rs["Home"])</a></li>
+                                <li><a href="#about">@Html.Raw(rs["About"])</a></li>
+                                <li><a href="#clients">@Html.Raw(rs["Clients"])</a></li>
+                                <li><a href="#performances">@Html.Raw(rs["Performances"])</a></li>
+                                <li><a href="#contact">@Html.Raw(rs["Contact"])</a></li>
+                            }
+                            else
+                            {
+                                <li><a asp-controller="Home" asp-action="Index">@rs["Home"]</a></li>
+                                <li><a asp-controller="Home" asp-action="Index" asp-route-id="1">About</a></li>
+                                <li><a asp-controller="Home" asp-action="Index" asp-route-id="2">Clients</a></li>
+                                <li><a asp-controller="Home" asp-action="Index" asp-route-id="3">Performances</a></li>
+                                <li><a asp-controller="Home" asp-action="Index" asp-route-id="4">Contact</a></li>
+                            }
+
+                            @if (User.Identity.Name != null)
+                            {
+                                <li>
+                                    <a class="pointer">@User.Identity.Name</a>
+                                    <ul>
+                                        <li><a asp-controller="BofHome" asp-action="Index">Back Office</a></li>
+                                        <li><a asp-controller="Account" asp-action="Logout">Logout</a></li>
+                                    </ul>
+                                </li>
+                            }
+
+                            <li>
+                                <a class="pointer">
+                                    @lang.ToUpper()
+                                </a>
+                                <ul>
+                                    <li>
+                                        @if (lang == "th")
+                                        {
+                                            <a class="pointer" onclick="setLang('en')">EN</a>
+                                        }
+                                        else
+                                        {
+                                            <a class="pointer" onclick="setLang('th')">TH</a>
+                                        }
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                        <!-- mainmenu close -->
+
+
+
+                    </div>
+
+
+                </div>
+            </div>
+        </header>
+        <!-- header close -->
+        <!-- content begin -->
+        <div id="content" class="no-bottom no-top">
+            @RenderBody()
+            <!-- footer begin -->
+            <footer class="style-2">
+                <div class="container">
+                    <div class="row align-items-middle">
+                        <div class="col-md-3">
+                            <img src="~/assets/images/logo.png" class="logo-small" alt=""><br>
+                        </div>
+
+                        <div class="col-md-6">
+                            &copy; Copyright 2024 - The Show Theatre. All rights reserved
+                        </div>
+
+                        <div class="col-md-3 text-right">
+                            <div class="social-icons">
+                                <a href="@contact.FacebookUrl" target="_blank"><i class="fa fa-facebook fa-lg"></i></a>
+                                <a href="@contact.InstagramUrl" target="_blank"><i class="fa-brands fa-instagram fa-lg"></i></a>
+                                <a href="@contact.YoutubeUrl" target="_blank"><i class="fa-brands fa-youtube fa-lg"></i></a>
+                                <a href="@contact.LineUrl" target="_blank"><i class="fa-brands fa-line fa-lg"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <a href="#" id="back-to-top" class="custom-1"></a>
+            </footer>
+            <!-- footer close -->
+        </div>
+    </div>
+
+    <!-- Javascript Files
+    ================================================== -->
+    <script src="~/assets/js/plugins.js"></script>
+    <script src="~/assets/js/designesia.js"></script>
+
+    <!-- RS5.0 Core JS Files -->
+    <script src="~/assets/revolution/js/jquery.themepunch.tools.min.js?rev=5.0"></script>
+    <script src="~/assets/revolution/js/jquery.themepunch.revolution.min.js?rev=5.0"></script>
+
+    <!-- RS5.0 Extensions Files -->
+    <script src="~/assets/revolution/js/extensions/revolution.extension.video.min.js"></script>
+    <script src="~/assets/revolution/js/extensions/revolution.extension.slideanims.min.js"></script>
+    <script src="~/assets/revolution/js/extensions/revolution.extension.layeranimation.min.js"></script>
+    <script src="~/assets/revolution/js/extensions/revolution.extension.navigation.min.js"></script>
+    <script src="~/assets/revolution/js/extensions/revolution.extension.actions.min.js"></script>
+    <script src="~/assets/revolution/js/extensions/revolution.extension.kenburn.min.js"></script>
+    <script src="~/assets/revolution/js/extensions/revolution.extension.migration.min.js"></script>
+    <script src="~/assets/revolution/js/extensions/revolution.extension.parallax.min.js"></script>
+    <script src="https://kit.fontawesome.com/62a54ee224.js" crossorigin="anonymous"></script>
+    <script>
+        setLang = lang => {
+            $.post("@Url.Action("SetLanguage", "Home")", { lang }, function (data) {
+                location.reload()
+            })
+        }
+
+        rs = (en, th) => "@lang" == "th" ? th : en
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>

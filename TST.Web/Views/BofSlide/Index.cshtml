@@ -1,0 +1,283 @@
+﻿@model TST.DataAccess.Entities.Slide
+
+@inject Common.Resources rss
+@{
+    Layout = "~/Views/Shared/_BofLayout.cshtml";
+
+    var rs = rss.Load();
+
+    ViewData["Title"] = rs["Slide"];
+
+    string path = Url.Content("~/Files/" + TST.Core.Common.UploadFolder.Slide);
+}
+
+<h2 class="text-center">@ViewData["Title"]</h2>
+
+<div class="row section-search">
+    <div class="col-md-3 mb-1">
+        <div class="input-group">
+            <input type="text" id="Keyword" class="form-control" placeholder="@rs["Keyword"]" />
+            <a onclick="onSearch()" class="btn btn-outline-secondary"><i class="fa fa-search"></i></a>
+        </div>
+    </div>
+    <div class="col-md-8"></div>
+    <div class="col-md-1 text-end">
+        <a onclick="modalAdd()" class="btn btn-success"><i class="fa fa-plus"></i></a>
+    </div>
+</div>
+
+<div style="overflow-x: auto">
+    <table class="display mt-1" id="dt1" style="width: 100%">
+        <thead>
+            <tr>
+                <th class="text-center"></th>
+                <th class="text-nowrap">@rs["Keyword"] EN</th>
+                <th class="text-nowrap">@rs["Keyword"] TH</th>
+                <th class="text-center text-nowrap">@rs["Active"]</th>
+                <th class="text-center">@rs["Ranking"]</th>
+                <th class="text-center text-nowrap">@rs["SavedBy"]</th>
+                <th class="text-center text-nowrap">@rs["SavedDate"]</th>
+                <th class="text-center"></th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+
+<div class="modal" tabindex="-1" id="modalSlide" data-bs-backdrop="static">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="form1">
+                    <input type="hidden" id="Id" />
+                    <div class="row mb-2">
+                        <div class="col-lg-12">
+                            <input type="file" asp-for="Image" class="dropify" data-default-file="" data-max-file-size="2M" data-allowed-file-extensions="jpg png webp" />
+                            <div class="d-flex align-items-center justify-content-between align-self-auto">
+                                <small class="form-text text-muted">@rs["RecommendSize"] 1920 x 1080 px</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <div class="col-lg-12">
+                            <label class="form-label">@rs["Keyword"] EN</label>
+                            <input type="text" asp-for="KeywordEn" class="form-control" maxlength="250" required />
+                        </div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <div class="col-lg-12">
+                            <label class="form-label">@rs["Keyword"] TH</label>
+                            <div><input type="text" asp-for="KeywordTh" class="form-control" maxlength="250" required /></div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <div class="col-md-3 col-lg-3">
+                            <label class="form-label">@rs["Ranking"]</label>
+                            <input type="number" asp-for="Ranking" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <div class="col-lg-12">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" role="switch" asp-for="IsActive" checked>
+                                <label class="form-check-label" for="IsActive">@rs["Active"]</label>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="">@rs["Close"]</button>
+                <button id="btnSave" type="button" class="btn btn-success" style="">@rs["Save"]</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        const modalSlide = new bootstrap.Modal('#modalSlide', {
+        })
+
+        let validator = $("#form1").validate()
+
+        $(function () {
+            new DataTable("#dt1", {
+                displayLength: 10,
+                filter: false,
+                lengthChange: false,
+                processing: true,
+                serverSide: true,
+                order: [],
+                ajax: {
+                    url: "@Url.Action("GetDt", "BofSlide")",
+                    data: function (d) {
+                        d.orderName = d.order[0] != undefined ? d.columns[d.order[0].column].data : ''
+                        d.orderType = d.order[0] != undefined ? d.order[0].dir : ''
+                        d.keyword = $.trim($("#Keyword").val())
+                    }
+                },
+                columns: [
+                    {
+                        data: "Image",
+                        sortable: false,
+                        render: function (o) {
+                            if (nvl(o) != "") {
+                                let img = "@path/" + o
+                                return "<a href='" + img + "' data-lightbox='x'><img src='" + img + "' width='60'></a>"
+                            }
+                            return ""
+                        }
+                    },
+                    { data: "KeywordEn", sortable: false, className: 'text-start' },
+                    { data: "KeywordTh", sortable: false, className: 'text-start' },
+                    {
+                        data: "IsActive",
+                        sortable: false,
+                        className: 'text-center',
+                        render: function (status) {
+                            return status ? "<i class='fa fa-check text-success'></i>" : "<i class='fa fa-ban text-danger'></i>";
+                        }
+                    },
+                    { data: "Ranking", sortable: false, className: 'text-center' },
+                    { data: "CreateBy", sortable: false, className: 'text-center' },
+                    {
+                        data: "CreateDate",
+                        sortable: false,
+                        className: 'text-center',
+                        render: function (dt) {
+                            return moment(dt).format("DD/MM/YYYY HH:mm")
+                        }
+                    },
+                    {
+                        data: null,
+                        sortable: false,
+                        className: 'text-nowrap',
+                        render: function (o) {
+                            let a = "<a onclick=\"modalEdit('" + o.Id + "')\" class='btn btn-warning'><i class='fa fa-edit text-white'></i></a> " +
+                                "<a onclick=\"del('" + o.Id + "', '" + o.KeywordEn + "')\" class='btn btn-danger'><i class='fa fa-trash'></i></a>"
+                            return a
+                        }
+                    },
+                ]
+            })
+
+            dropifyInit()
+
+            $(".section-search input").keypress(function (e) {
+                if (e.which == 13) {
+                    onSearch()
+                    return false
+                }
+            })
+
+            $("#btnSave").click(function () {
+                if ($("#form1").valid()) {
+                    insert();
+                }
+            });
+        })
+
+        onSearch = () => $("#dt1").DataTable().ajax.reload()
+
+        modalAdd = () => {
+            validator.resetForm()
+            dropifyReset()
+            $("#modalSlide input").val("")
+            $("#modalSlide h5").text("@Html.Raw(rs["Add"]) @Html.Raw(rs["Slide"])")
+
+            $.getJSON("@Url.Action("GetNextRanking", "BofSlide")", {}, function (data) {
+
+                $("#KeywordEn").focus()
+                $("#Ranking").val(data)
+                
+                modalSlide.show()
+            })  
+        }
+
+
+        insert = () => {
+            var data = new FormData();
+            data.append("file1", $("#Image").prop("files")[0])
+            data.append("Id", $("#Id").val())
+            data.append("KeywordEn", $.trim($("#KeywordEn").val()))
+            data.append("KeywordTh", $.trim($("#KeywordTh").val()))
+            data.append("Ranking", $("#Ranking").val())
+            data.append("IsActive", $("#IsActive").is(":checked"))
+
+            $.ajax("@Url.Action("Insert", "BofSlide")", {
+                data: data,
+                method: "post",
+                processData: false,
+                contentType: false,
+                cache: false,
+            }).then(function (data) {
+                if (data.Success) {
+                    Swal.fire({
+                        title: "@rs["Saved"] @rs["Successfully"]!",
+                        icon: "success"
+                    })
+                    $("#dt1").DataTable().ajax.reload()
+                    modalSlide.hide()
+                } else {
+                    Swal.fire({
+                        title: data.Message,
+                        icon: "warning"
+                    })
+                }
+            })
+        }
+
+        modalEdit = id => {
+            validator.resetForm()
+
+            $.getJSON("@Url.Action("GetById", "BofSlide")", { id }, function (data) {
+                if (nvl(data.Image) != "") {
+                    dropifySetFile($("#Image").data('dropify'), "@path/" + data.Image)
+                }
+
+                $("#Id").val(data.Id)
+                $("#Ranking").val(data.Ranking)
+                $("#KeywordEn").val(data.KeywordEn)
+                $("#KeywordTh").val(data.KeywordTh)
+                $("#IsActive").prop("checked", data.IsActive)
+                $("#modalSlide h5").text("@Html.Raw(rs["Edit"]) @Html.Raw(rs["Slide"])")
+                modalSlide.show()
+            });
+        }
+
+        del = (id, key) => {
+            Swal.fire({
+                title: "@rs["Delete"]",
+                text: "@Html.Raw(rs["ConfirmDeleteMessage"]) " + key + " ?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#dc3545",
+                cancelButtonColor: "#ddd",
+                confirmButtonText: "@rs["Confirm"]",
+                cancelButtonText: "@rs["Cancel"]"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.post("@Url.Action("Delete", "BofSlide")", { id }, function (data) {
+                        if (data) {
+                            Swal.fire({
+                                title: "@rs["Deleted"] @rs["Successfully"]!",
+                                icon: "success"
+                            })
+                            $("#dt1").DataTable().ajax.reload()
+                        }
+                    })
+                }
+            })
+        }
+    </script>
+}
